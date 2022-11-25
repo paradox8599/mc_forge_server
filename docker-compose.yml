@@ -1,5 +1,5 @@
 services:
-  server:
+  mc:
     build: .
     ports:
       - 25565:25565
@@ -9,3 +9,5 @@ services:
       - ./config:/root/mc/config
       - ./world:/root/mc/world
       - ./server.properties:/root/mc/server.properties
+      - ./start.sh:/root/mc/start.sh
+    tty: true

@@ -1,22 +1,27 @@
-FROM anapsix/alpine-java
+FROM openjdk:15
+
+ENV FORGE_INSTALLER_ADDR=https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.34/forge-1.16.5-36.2.34-installer.jar
+ENV FORGE_INSTALLER_NAME=forge-1.16.5-36.2.34-installer.jar
+ENV SERVER_FILE_NAME=forge-1.16.5-36.2.34.jar
+
+# RUN microdnf update
+RUN microdnf install tmux
 
 WORKDIR /root/mc
 
-ENV FORGE_INSTALLER_ADDR=https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-14.23.5.2859/forge-1.12.2-14.23.5.2859-installer.jar
-ENV FORGE_INSTALLER_NAME=forge-1.12.2-14.23.5.2859-installer.jar
-ENV SERVER_FILE_NAME=forge-1.12.2-14.23.5.2859.jar
-
-RUN apk update
-RUN apk add aria2
-
-# Download Forge installer
-RUN aria2c $FORGE_INSTALLER_ADDR -o $FORGE_INSTALLER_NAME
-# Install mc forge server
+# # Download Forge installer
+RUN curl $FORGE_INSTALLER_ADDR -o $FORGE_INSTALLER_NAME
+# # Install mc forge server
 RUN java -jar $FORGE_INSTALLER_NAME --installServer
-# Remove installer
+# # Remove installer
 RUN rm forge-*-installer*
 
-# Agree EULA
+# # Agree EULA
 RUN echo "eula=true" > eula.txt
 
-CMD ["java", "-Xmx20G", "-Xms20G", "-jar", "forge-1.12.2-14.23.5.2859.jar", "nogui"]
+WORKDIR /root
+
+# bashrc
+RUN echo 'alias tn="tmux new -s default"' >> .bashrc
+RUN echo 'alias ta="tmux a -t default"' >> .bashrc
+RUN echo 'alias t="ta || tn"' >> .bashrc
